@@ -27,7 +27,7 @@ function done(itr::StackedFeatures, nada)
 end
 
 function next(itr::StackedFeatures, nada)
-  itr.buffer = itr.buffer[2:]
+  itr.buffer = itr.buffer[2:end]
   push!(itr.buffer, next(itr.featureStream, nada)[1])
   @assert length(itr.buffer) == itr.window
   vec = Float32[]

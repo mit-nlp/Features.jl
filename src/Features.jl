@@ -4,7 +4,7 @@ import Base.start
 import Base.done
 import Base.next
 import Base.length
-export HTKFeatures, StackedFeatures, BunchedFeatures, swap2, swap4
+export HTKFeatures, StackedFeatures, BunchedFeatures, swap2, swap4, dims
 
 # NOTE: Features are column vectors of Float32
 
