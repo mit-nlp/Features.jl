@@ -26,14 +26,18 @@ function HTKFeatures(fn :: String)
   return HTKFeatures(fn, nsamples, period, bps, kind)
 end
 
-dims(itr::HTKFeatures)   = itr.bps / 4
-length(itr::HTKFeatures) = itr.nsamples
+dims(itr :: HTKFeatures)   = itr.bps / 4
+length(itr :: HTKFeatures) = itr.nsamples
+findex(itr :: HTKFeatures, t :: Float32) = round(t / (itr.period / 10000000.0))
 
-function start(itr::HTKFeatures) 
-  f = open(fn, "r")
+function start(itr :: HTKFeatures) 
+  f = open(itr.fn, "r")
   seek(f, 12) # seek past the header
   return HTKState(f, 0x00000000)
 end
+
+open(itr :: HTKFeatures) = start(itr :: HTKFeatures)
+close(state :: HTKState) = close(state.stream)
 
 function done(itr :: HTKFeatures, state :: HTKState)
   if state.findex == itr.nsamples
@@ -44,8 +48,8 @@ function done(itr :: HTKFeatures, state :: HTKState)
 end
 
 function next(itr :: HTKFeatures, state :: HTKState) 
-  itr.findex += 1
-  return (readHTKFrame(itr.stream, dims(itr)), nothing)
+  state.findex += 1
+  return (readHTKFrame(state.stream, dims(itr)), state)
 end
 
 function readHTKFrame(f, dims)
@@ -55,3 +59,10 @@ function readHTKFrame(f, dims)
   end
   return vec
 end
+
+function getindex(htk :: HTKState, i :: Int)
+  seek(f, 12 + (bps * i))
+  vec = readHTKFrame(f, dims(htk))
+  return vec
+end
+
