@@ -4,7 +4,7 @@ import Base.start
 import Base.done
 import Base.next
 import Base.length
-import Base.open
+import Base.open, Base.close
 export HTKFeatures, StackedFeatures, BunchedFeatures, swap2, swap4, dims, analist, SegmentIterator, SegmentedFeatures
 
 # NOTE: Features are column vectors of Float32
