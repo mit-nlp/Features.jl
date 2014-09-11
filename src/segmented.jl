@@ -62,7 +62,7 @@ function analist(fn :: String; dir = ".", sample_rate = 8000)
   ends   = Float32[]
   for l in eachline(f)
     ana = split(chop(l), r"\s+")
-    if prior != ana[4]
+    if prior != ana[4] && prior != ""
       htkf = HTKFeatures("$dir/$prior")
       push!(ret, SegmentedFeatures(() -> open(htkf), f -> close(f), t -> findex(htkf, t), starts, ends))
       starts = Float32[]
@@ -71,8 +71,11 @@ function analist(fn :: String; dir = ".", sample_rate = 8000)
     push!(starts, float32(ana[2]) / sample_rate)
     push!(ends, float32(ana[3]) / sample_rate)
   end
-  htkf = HTKFeatures("$dir/$prior")
-  push!(ret, SegmentedFeatures(() -> open(HTKFeatures(prior)), f -> close(f), t -> findex(htkf, t), starts, ends))
+
+  if prior != ""
+    htkf = HTKFeatures("$dir/$prior")
+    push!(ret, SegmentedFeatures(() -> open(HTKFeatures(prior)), f -> close(f), t -> findex(htkf, t), starts, ends))
+  end
 
   close(f)
 end
