@@ -70,6 +70,7 @@ function analist(fn :: String; dir = ".", sample_rate = 8000)
     end
     push!(starts, float32(ana[2]) / sample_rate)
     push!(ends, float32(ana[3]) / sample_rate)
+    prior = ana[4]
   end
 
   if prior != ""
