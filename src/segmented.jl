@@ -71,7 +71,7 @@ function analist(fn :: String, dir = ".", sample_rate = 8000)
     push!(starts, float32(ana[2]) / sample_rate)
     push!(ends, float32(ana[3]) / sample_rate)
   end
-  htkf = HTKFeatures(s"$dir/$prior")
+  htkf = HTKFeatures("$dir/$prior")
   push!(ret, SegmentedFeatures(() -> open(HTKFeatures(prior)), f -> close(f), t -> findex(htkf, t), starts, ends))
 
   close(f)
