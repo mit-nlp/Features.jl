@@ -78,5 +78,6 @@ function analist(fn :: String; dir = ".", sample_rate = 8000)
   end
 
   close(f)
+  ret
 end
 
