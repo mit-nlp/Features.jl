@@ -12,6 +12,7 @@ end
 type HTKState
   stream :: IOStream
   findex :: Uint32
+  frame  :: Vector{Float32}
 end
 
 function HTKFeatures(fn :: String)
@@ -26,17 +27,19 @@ function HTKFeatures(fn :: String)
   return HTKFeatures(fn, nsamples, period, bps, kind)
 end
 
-dims(itr :: HTKFeatures)   = itr.bps / 4
+dims(itr :: HTKFeatures)   = int(itr.bps / 4)
+dims(si :: HTKState)       = length(si.frame)
 length(itr :: HTKFeatures) = itr.nsamples
-findex(itr :: HTKFeatures, t :: Float32) = round(t / (itr.period / 10000000.0))
+findex(itr :: HTKFeatures, t :: Float32) = max(0, min(round(t / (itr.period / 10000000.0)), itr.nsamples))
+time(itr :: HTKFeatures, f :: Int) = round(f * itr.period / 10000000.0)
 
 function start(itr :: HTKFeatures) 
   f = open(itr.fn, "r")
   seek(f, 12) # seek past the header
-  return HTKState(f, 0x00000000)
+  return HTKState(f, 0x00000000, zeros(dims(itr)))
 end
 
-open(itr :: HTKFeatures) = start(itr :: HTKFeatures)
+open(itr :: HTKFeatures) = start(itr)
 close(state :: HTKState) = close(state.stream)
 
 function done(itr :: HTKFeatures, state :: HTKState)
@@ -49,20 +52,13 @@ end
 
 function next(itr :: HTKFeatures, state :: HTKState) 
   state.findex += 1
-  return (readHTKFrame(state.stream, dims(itr)), state)
+  return (readHTKFrame(state.stream, state.frame), state)
 end
 
-function readHTKFrame(f, dims)
-  vec = Float32[]
-  for k = 1:dims
-    push!(vec, reinterpret(Float32, swap4(read(f, Uint32))))
+function readHTKFrame(f, vec)
+  for k = 1:length(vec)
+    vec[k] = reinterpret(Float32, swap4(read(f, Uint32)))
   end
-  return vec
-end
-
-function getindex(htk :: HTKState, i :: Int)
-  seek(f, 12 + (bps * i))
-  vec = readHTKFrame(f, dims(htk))
   return vec
 end
 
