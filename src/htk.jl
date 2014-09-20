@@ -30,7 +30,7 @@ end
 dims(itr :: HTKFeatures)   = int(itr.bps / 4)
 dims(si :: HTKState)       = length(si.frame)
 length(itr :: HTKFeatures) = itr.nsamples
-findex(itr :: HTKFeatures, t :: Float32) = max(0, min(round(t / (itr.period / 10000000.0)), itr.nsamples))
+findex(itr :: HTKFeatures, t :: Float32) = int(max(1, min(round(t / (itr.period / 10000000.0)) + 1, itr.nsamples)))
 time(itr :: HTKFeatures, f :: Int) = round(f * itr.period / 10000000.0)
 
 function start(itr :: HTKFeatures) 
