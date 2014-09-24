@@ -1,11 +1,7 @@
 module Features
 
-import Base.start
-import Base.done
-import Base.next
-import Base.length
-import Base.open, Base.close
-export HTKFeatures, StackedFeatures, BunchedFeatures, swap2, swap4, dims, analist, SegmentedFile, mask, marks
+import Base: start, done, next, length, open, close
+export HTKFeatures, StackedFeatures, BunchedFeatures, swap2, swap4, dims, analist, marks, SegmentedFile, mask
 
 # NOTE: Features are column vectors of Float32
 

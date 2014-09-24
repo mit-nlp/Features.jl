@@ -60,7 +60,7 @@ end
 # -------------------------------------------------------------------------------------------------------------------------
 # Mark reader
 # -------------------------------------------------------------------------------------------------------------------------
-function marks(fn :: String; dir = ".")
+function marks(fn :: String; dir = ".", collars = (String=>Float32)[])
   f = open(fn, "r")
 
   ret    = SegmentedFile[]
@@ -77,9 +77,29 @@ function marks(fn :: String; dir = ".")
       ends   = Float32[]
       names  = String[]
     end
-    push!(starts, float32(ana[2]))
-    push!(ends, float32(ana[3]))
-    push!(names, ana[1])
+
+    # c1s     s                 e      c2e
+    #  ^------^-----------------^-------^
+    # 
+    # c1s                s/e/c2e
+    #  ^--------------------^
+    #
+    # c1s                  s/e     c2e
+    #  ^--------------------^-------^
+    col = ana[1] in keys(collars) ? collars[ana[1]] : 0.0
+    c1s = float32(ana[2])
+    c2e = float32(ana[3])
+    s   = min(c1s + col, c2e)
+    e   = max(c2e - col, s)
+    
+    for (ss, se, sn) in [ (c1s, s, "collar"), (s, e, ana[1]), (e, c2e, "collar") ]
+      if (se - ss) > 0
+        push!(starts, ss)
+        push!(ends, se)
+        push!(names, sn)
+      end
+    end
+
     prior = ana[4]
   end
 
