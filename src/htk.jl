@@ -27,7 +27,6 @@ function HTKFeatures(fn :: String)
   return HTKFeatures(fn, nsamples, period, bps, kind)
 end
 
-finalizer(hs :: HTKState, hs -> close(hs.stream))
 dims(itr :: HTKFeatures)   = int(itr.bps / 4)
 dims(si :: HTKState)       = length(si.frame)
 length(itr :: HTKFeatures) = itr.nsamples
