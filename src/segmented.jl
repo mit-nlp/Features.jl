@@ -9,7 +9,7 @@ immutable SegmentedFile
 end
 
 function mask(sf :: SegmentedFile; filter :: Function = (name, start, fin, file) -> true)
-  htk = HTKFeatures(sf.fn)
+  htk = HTKFile(sf.fn)
   m   = [ false for i = 1:htk.nsamples ]
   n   = 0
   for i = 1:length(sf.starts)

@@ -1,7 +1,7 @@
 module Features
 
 import Base: start, done, next, length, open, close
-export HTKFeatures, StackedFeatures, BunchedFeatures, swap2, swap4, dims, analist, marks, SegmentedFile, mask
+export HTKFile, HTKIterator, features, StackedFeatures, BunchedFeatures, swap2, swap4, dims, analist, marks, SegmentedFile, mask
 
 # NOTE: Features are column vectors of Float32
 
